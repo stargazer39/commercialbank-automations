@@ -1,0 +1,22 @@
+users:
+  users:
+    dehemi:
+      username: xx
+      password: xx
+      combank:
+        username: "x"
+        password: "x"
+jwt:
+  secret: efnwwljnir333irj23irj23irjq3rijrj2lorij3ir3
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/combank
+    username: root
+    password: root
+  jpa:
+      hibernate:
+        ddl-auto: update
+      properties:
+        hibernate:
+          dialect: org.hibernate.dialect.PostgreSQLDialect
