@@ -6,6 +6,8 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
+import java.util.logging.Level;
+
 @Service
 public class SeleniumService {
     public ChromeDriver getInstance() {
@@ -15,6 +17,7 @@ public class SeleniumService {
         options.addArguments("--disable-dev-shm-usage");
         options.addArguments("--no-sandbox");
 
-        return new ChromeDriver(options);
+        ChromeDriver chromeDriver = new ChromeDriver(options);
+        return chromeDriver;
     }
 }

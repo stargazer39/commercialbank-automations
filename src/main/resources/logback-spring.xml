@@ -1,0 +1,4 @@
+<configuration>
+    <logger name="org.openqa.selenium" level="WARN"/>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+</configuration>

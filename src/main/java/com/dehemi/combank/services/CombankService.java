@@ -50,7 +50,7 @@ public class CombankService {
                 List<Account> account = instance.getAccounts();
 
                 for (Account a : account) {
-                    accountsService.processAccount(a,instance);
+                    accountsService.processAccount(a,instance).subscribe();
                 }
 
             } catch (InterruptedException | CsvValidationException | IOException | CSVProcessException ex) {

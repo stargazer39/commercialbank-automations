@@ -10,6 +10,7 @@ import com.opencsv.exceptions.CsvValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.util.List;
@@ -19,14 +20,16 @@ import java.util.List;
 public class AccountsService {
     final TransactionRepository transactionRepository;
     final TransactionsScanLogRepository transactionsScanLogRepository;
+    final EventManagerService eventManagerService;
 
-    public AccountsService(TransactionRepository transactionRepository,TransactionsScanLogRepository transactionsScanLogRepository) {
+    public AccountsService(TransactionRepository transactionRepository,TransactionsScanLogRepository transactionsScanLogRepository, EventManagerService eventManagerService) {
         this.transactionRepository = transactionRepository;
         this.transactionsScanLogRepository = transactionsScanLogRepository;
+        this.eventManagerService = eventManagerService;
     }
 
     @Transactional
-    public void processAccount(Account a, CombankInstance instance) throws CSVProcessException, CsvValidationException, IOException, InterruptedException {
+    public Mono<Void> processAccount(Account a, CombankInstance instance) throws CSVProcessException, CsvValidationException, IOException, InterruptedException {
         log.info("account number - {} type - {} available total - {} current balance - {}", a.getAccountNumber(), a.getAccountType(),a.getAvailableTotal(), a.getCurrentTotal());
         List<Transaction> transactions = instance.getTransactions(a, false);
 
@@ -38,5 +41,7 @@ public class AccountsService {
         transactionScanLog.setUserId(instance.getUser().getUsername());
 
         transactionsScanLogRepository.save(transactionScanLog);
+
+        return eventManagerService.sendTransactionScanLogEvent(transactionScanLog);
     }
 }

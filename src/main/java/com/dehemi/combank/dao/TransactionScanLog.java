@@ -1,5 +1,8 @@
 package com.dehemi.combank.dao;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -19,4 +22,15 @@ public class TransactionScanLog {
     private Timestamp createdAt;
     @Column(nullable = false)
     private Integer newLogs;
+
+    @Transient
+    private ObjectMapper mapper = new ObjectMapper();
+
+    public String toString()  {
+        try {
+            return mapper.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            return null;
+        }
+    }
 }
