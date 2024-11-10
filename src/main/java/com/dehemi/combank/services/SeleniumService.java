@@ -1,5 +1,6 @@
 package com.dehemi.combank.services;
 
+import com.dehemi.combank.config.SeleniumConfig;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -10,14 +11,18 @@ import java.util.logging.Level;
 
 @Service
 public class SeleniumService {
+    final SeleniumConfig config;
+
+    public SeleniumService(SeleniumConfig config) {
+        this.config = config;
+    }
+
     public ChromeDriver getInstance() {
         ChromeOptions options = new ChromeOptions();
-        options.addArguments("--headless=new");
-        options.addArguments("--disable-gpu");
-        options.addArguments("--disable-dev-shm-usage");
-        options.addArguments("--no-sandbox");
+        for(String f : this.config.getFlags()) {
+            options.addArguments(f);
+        }
 
-        ChromeDriver chromeDriver = new ChromeDriver(options);
-        return chromeDriver;
+        return new ChromeDriver(options);
     }
 }
