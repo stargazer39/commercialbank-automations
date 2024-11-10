@@ -1,0 +1,6 @@
+.git
+.idea
+target
+src/main/resources/application.yml
+Dockerfile
+compose.yml
