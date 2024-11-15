@@ -40,7 +40,7 @@ public class CombankService {
             });
     }
 
-    @Scheduled(fixedDelay = 30*1000)
+    @Scheduled(fixedDelay = 10*1000)
     public void refresh() {
         instances.forEach((key, instance) -> {
             try {

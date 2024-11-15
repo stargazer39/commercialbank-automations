@@ -1,26 +1,33 @@
 import * as React from "react";
-import { createLazyFileRoute } from "@tanstack/react-router";
-import { useMutation } from "@tanstack/react-query";
+import { createLazyFileRoute, useNavigate } from "@tanstack/react-router";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { login } from "../api/auth";
+import { useAuthStore } from "../store/auth";
 
 export const Route = createLazyFileRoute("/login")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
+  const navigate = useNavigate();
+
+  const qc = useQueryClient();
+
+  const authStore = useAuthStore();
   const mutation = useMutation({
     mutationFn: login,
-    onSuccess: () => {
-      // Invalidate and refetch
+    onSuccess: (response) => {
+      authStore.setAccessToken(response.accessToken);
+      qc.invalidateQueries({ queryKey: ["transactions"] });
+      navigate({ to: "/transactions" });
     },
   });
 
-  const onSubmit:React.FormEventHandler<HTMLFormElement> = (e) => {
+  const onSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-    const credentials = new FormData(e.currentTarget); 
-  
-    mutation.mutate(Object.fromEntries(credentials) as any)
-  }
+    const credentials = new FormData(e.currentTarget);
+    mutation.mutate(Object.fromEntries(credentials) as any);
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -81,9 +88,10 @@ function RouteComponent() {
         </form>
         <p className="text-sm text-center text-gray-600">
           Don't have an account?{" "}
-          <a href="#" className="text-indigo-500 hover:underline">
+          {/* <a href="#" className="text-indigo-500 hover:underline">
             Sign up
-          </a>
+          </a> */}
+          Tough shit!
         </p>
       </div>
     </div>

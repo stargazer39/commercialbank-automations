@@ -11,6 +11,7 @@ import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("transactions")
+@CrossOrigin
 public class TransactionController {
     TransactionService transactionService;
     public TransactionController(TransactionService transactionService) {

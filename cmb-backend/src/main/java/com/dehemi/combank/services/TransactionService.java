@@ -4,6 +4,7 @@ import com.dehemi.combank.dao.Transaction;
 import com.dehemi.combank.repo.TransactionRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,7 +17,7 @@ public class TransactionService {
     }
 
     public Page<Transaction> getTransactions(int page, int size, String userId) {
-        return transactionRepository.findAllByUserId(userId,PageRequest.of(page, size));
+        return transactionRepository.findAllByUserId(userId,PageRequest.of(page, size, Sort.by("createdAt").descending()));
     }
 
     public Long getTotalTransactions() {

@@ -22,7 +22,9 @@ public class EventManagerService {
         return Mono.empty();
     }
 
-    public Flux<TransactionScanLog> getTransactionScanLogFlux() {
-        return scanLogSink.asFlux();
+    public Flux<TransactionScanLog> getTransactionScanLogFlux(String userId) {
+        return Flux.create(transactionScanLogFluxSink -> {
+            scanLogSink.asFlux().filter(transactionScanLog -> transactionScanLog.getUserId().equals(userId)).subscribe(transactionScanLogFluxSink::next);
+        });
     }
 }
