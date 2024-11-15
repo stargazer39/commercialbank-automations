@@ -42,15 +42,14 @@ public class CombankService {
 
     @Scheduled(fixedDelay = 30*1000)
     public void refresh() {
-        instances.entrySet().stream().forEach(e -> {
+        instances.forEach((key, instance) -> {
             try {
-                CombankInstance instance = e.getValue();
                 instance.init();
                 instance.login();
                 List<Account> account = instance.getAccounts();
 
                 for (Account a : account) {
-                    accountsService.processAccount(a,instance).subscribe();
+                    accountsService.processAccount(a, instance).subscribe();
                 }
 
             } catch (InterruptedException | CsvValidationException | IOException | CSVProcessException ex) {
