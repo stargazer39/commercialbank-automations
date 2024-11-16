@@ -1,5 +1,6 @@
 package com.dehemi.combank.services;
 
+import com.dehemi.combank.config.TimeoutConfig;
 import com.dehemi.combank.dao.Account;
 import com.dehemi.combank.dao.Transaction;
 import com.dehemi.combank.dao.User;
@@ -7,6 +8,7 @@ import com.dehemi.combank.exceptions.CSVProcessException;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 import lombok.Getter;
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -37,9 +39,12 @@ public class CombankInstance {
     @Getter
     final User user;
 
-    public CombankInstance(User user, ChromeDriver driver) {
+    final TimeoutConfig timeoutConfig;
+
+    public CombankInstance(User user, ChromeDriver driver, TimeoutConfig timeoutConfig) {
         this.driver = driver;
         this.user = user;
+        this.timeoutConfig = timeoutConfig;
     }
 
     public void init() throws InterruptedException {
@@ -192,7 +197,7 @@ public class CombankInstance {
             wait.until(ExpectedConditions.visibilityOfElementLocated(accountElementLocator));
             driver.findElement(accountElementLocator).click();
 
-            if(!sem.tryAcquire(60, TimeUnit.SECONDS)) {
+            if(!sem.tryAcquire(120, TimeUnit.SECONDS)) {
                 throw new TimeoutException();
             }
         } catch (Exception e) {

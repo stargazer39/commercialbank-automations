@@ -1,5 +1,6 @@
 package com.dehemi.combank.services;
 
+import com.dehemi.combank.config.TimeoutConfig;
 import com.dehemi.combank.config.UsersConfig;
 import com.dehemi.combank.dao.Account;
 import com.dehemi.combank.dao.Transaction;
@@ -26,17 +27,19 @@ public class CombankService {
     final TransactionRepository transactionRepository;
     final TransactionsScanLogRepository transactionsScanLogRepository;
     final AccountsService accountsService;
+    final TimeoutConfig timeoutConfig;
 
-    public CombankService(UsersConfig usersConfig, SeleniumService seleniumService, TransactionRepository transactionRepository, TransactionsScanLogRepository transactionsScanLogRepository,AccountsService accountsService) {
+    public CombankService(UsersConfig usersConfig, SeleniumService seleniumService, TransactionRepository transactionRepository, TransactionsScanLogRepository transactionsScanLogRepository,AccountsService accountsService, TimeoutConfig timeoutConfig) {
             this.seleniumService = seleniumService;
             this.transactionRepository = transactionRepository;
             this.transactionsScanLogRepository = transactionsScanLogRepository;
             this.accountsService = accountsService;
+            this.timeoutConfig = timeoutConfig;
 
             instances = new HashMap<>();
 
             usersConfig.getUsers().entrySet().stream().forEach(e -> {
-                instances.put(e.getKey(),new CombankInstance(e.getValue(), seleniumService.getInstance()));
+                instances.put(e.getKey(),new CombankInstance(e.getValue(), seleniumService.getInstance(), timeoutConfig));
             });
     }
 
