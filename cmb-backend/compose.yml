@@ -5,7 +5,4 @@ services:
 #      - "./src/main/resources/application.properties:/app/target/classes/application.properties"
       - "./src/main/resources/application.yml:/app/application.yml"
 #      - "./src/main/resources/logback-spring.xml:/app/target/classes/logback-spring.xml"
-    ports:
-      - "8091:8080"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+    network_mode: "host"

@@ -5,6 +5,7 @@ import com.dehemi.combank.dao.Account;
 import com.dehemi.combank.dao.Transaction;
 import com.dehemi.combank.dao.User;
 import com.dehemi.combank.exceptions.CSVProcessException;
+import com.dehemi.combank.exceptions.WaitForDownloadFileException;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 import lombok.Getter;
@@ -135,7 +136,7 @@ public class CombankInstance {
         waitModal.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".modal-overlay")));
     }
 
-    public List<Transaction> getTransactions(Account account, boolean maximum) throws InterruptedException, CsvValidationException, IOException, CSVProcessException {
+    public synchronized List<Transaction> getTransactions(Account account, boolean maximum) throws InterruptedException, CsvValidationException, IOException, CSVProcessException {
         this.goToMyPortfolio();
         this.retryIfStale(() -> {
             this.waitForLoading();
@@ -173,7 +174,7 @@ public class CombankInstance {
         AtomicReference<String> encodedResponse = new AtomicReference<>();
 
         try {
-            devTools.createSession();
+            devTools.createSessionIfThereIsNotOne();
             devTools.send(Network.enable(Optional.empty(), Optional.empty(), Optional.empty()));
             Semaphore sem = new Semaphore(1);
             sem.acquire();
@@ -187,9 +188,9 @@ public class CombankInstance {
                     encodedResponse.set(devTools.send(Network.getResponseBody(responseReceived.getRequestId())).getBody());
                     log.info("Intercepted Response: " + encodedResponse.get().length());
                     sem.release();
+//                    devTools.clearListeners();
                 }
             });
-
 
             // Get transaction
             By accountElementLocator = By.xpath("//i[@class='csv-download-icon ']");
@@ -197,16 +198,14 @@ public class CombankInstance {
             wait.until(ExpectedConditions.visibilityOfElementLocated(accountElementLocator));
             driver.findElement(accountElementLocator).click();
 
-            if(!sem.tryAcquire(120, TimeUnit.SECONDS)) {
-                throw new TimeoutException();
+            if(!sem.tryAcquire(timeoutConfig.getWaitForIntercept(), TimeUnit.SECONDS)) {
+                throw new WaitForDownloadFileException("timeout while waiting for transactions");
             }
         } catch (Exception e) {
-//            devTools.close();
+            devTools.clearListeners();
             throw new RuntimeException(e);
         }
-
-//        devTools.close();
-
+        devTools.clearListeners();
         String csv = encodedResponse.get();
 
         if(csv.isEmpty()) {
