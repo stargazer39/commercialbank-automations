@@ -8,11 +8,12 @@ import com.dehemi.combank.dao.TokenRequest;
 import com.dehemi.combank.dao.User;
 import com.dehemi.combank.exceptions.TokenInvalidException;
 import com.dehemi.combank.exceptions.UsernamePasswordWrongException;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Mono;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("user")
@@ -28,30 +29,29 @@ public class UserController {
     }
 
     @PostMapping(path = "token",consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public Mono<Token> token(@RequestBody TokenRequest tokenRequest) {
+    public Token token(@RequestBody TokenRequest tokenRequest) throws UsernamePasswordWrongException {
         String username = tokenRequest.getUsername();
         String password = tokenRequest.getPassword();
 
         User user = usersConfig.getUsers().get(username);
 
         if(user == null || !password.equals(user.getPassword())) {
-            return Mono.error(new UsernamePasswordWrongException());
+            throw new UsernamePasswordWrongException();
         }
 
-        Token.TokenBuilder builder = Token.builder();
-        builder.accessToken(jwtUtil.createToken(user));
-
-        return Mono.just(builder.build());
+        return Token.builder()
+                .accessToken(jwtUtil.createToken(user))
+                .build();
     }
 
     @PostMapping(path = "introspect",consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public Mono<String> getTokenValidity(@RequestBody IntrospectRequest tokenRequest) {
+    public String getTokenValidity(@RequestBody IntrospectRequest tokenRequest) throws TokenInvalidException {
         String user = jwtUtil.getAssociatedUser(tokenRequest.getToken());
 
         if(user == null) {
-            return Mono.error(new TokenInvalidException());
+            throw new TokenInvalidException();
         }
 
-        return Mono.just(user);
+        return user;
     }
 }

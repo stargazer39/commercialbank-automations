@@ -2,29 +2,23 @@ package com.dehemi.combank.services;
 
 import com.dehemi.combank.dao.TransactionScanLog;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import reactor.core.publisher.Sinks;
-
 @Slf4j
 @Service
 public class EventManagerService {
-    Sinks.Many<TransactionScanLog> scanLogSink = Sinks.many().multicast().onBackpressureBuffer(32);
+    private final SimpMessageSendingOperations messagingTemplate;
 
-    public Mono<Void> sendTransactionScanLogEvent(TransactionScanLog transactionScanLog) {
-        Sinks.EmitResult emitResult = scanLogSink.tryEmitNext(transactionScanLog);
-        if (emitResult.isFailure()) {
-            log.info("Transaction scan log event failed");
-            return Mono.empty();
-        }
-
-        return Mono.empty();
+    public EventManagerService(SimpMessageSendingOperations messagingTemplate) {
+        this.messagingTemplate = messagingTemplate;
     }
 
-    public Flux<TransactionScanLog> getTransactionScanLogFlux(String userId) {
-        return Flux.create(transactionScanLogFluxSink -> {
-            scanLogSink.asFlux().filter(transactionScanLog -> transactionScanLog.getUserId().equals(userId)).subscribe(transactionScanLogFluxSink::next);
-        });
+    public void sendTransactionScanLogEvent(TransactionScanLog transactionScanLog) {
+        messagingTemplate.convertAndSend("/topic/transactions", transactionScanLog);
+    }
+
+    public TransactionScanLog getTransactionScanLogFlux(String userId) {
+        return null;
     }
 }

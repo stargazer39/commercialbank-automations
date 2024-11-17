@@ -5,9 +5,7 @@ import com.dehemi.combank.dao.User;
 import com.dehemi.combank.dao.http.TransactionsResponse;
 import com.dehemi.combank.services.TransactionService;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("transactions")
@@ -19,13 +17,12 @@ public class TransactionController {
     }
 
     @GetMapping()
-    public Mono<TransactionsResponse> getTransactions(@RequestParam int page, @RequestParam int size, @RequestAttribute User user) {
+    public TransactionsResponse getTransactions(@RequestParam int page, @RequestParam int size, @RequestAttribute User user) {
         Page<Transaction> transactions = transactionService.getTransactions(page-1, size, user.getUsername());
-        TransactionsResponse.TransactionsResponseBuilder builder = TransactionsResponse.builder();
-
-        builder.transactionList(transactions.getContent());
-        builder.totalPages(transactions.getTotalPages());
-
-        return Mono.just(builder.build());
+        return TransactionsResponse
+                .builder()
+                .transactionList(transactions.getContent())
+                .totalPages(transactions.getTotalPages())
+                .build();
     }
 }
