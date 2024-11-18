@@ -3,6 +3,7 @@ package com.dehemi.combank;
 import com.dehemi.combank.config.PublicEndpoints;
 import com.dehemi.combank.config.UsersConfig;
 import com.dehemi.combank.filters.AuthFilter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -14,7 +15,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @SpringBootApplication
 @EnableScheduling
 public class AutomationApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(AutomationApplication.class, args);
 	}
@@ -24,7 +24,7 @@ public class AutomationApplication {
 		return new WebMvcConfigurer() {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/*").allowedOrigins("*");
+				registry.addMapping("/**").allowedOrigins("*");
 			}
 		};
 	}
