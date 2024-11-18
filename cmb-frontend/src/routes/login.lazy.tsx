@@ -21,6 +21,9 @@ function RouteComponent() {
       qc.invalidateQueries({ queryKey: ["transactions"] });
       navigate({ to: "/transactions" });
     },
+    onError(error, variables, context) {
+        console.error(error);
+    },
   });
 
   const onSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {

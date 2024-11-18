@@ -60,7 +60,7 @@ public class CombankService {
                 }
 
             } catch (InterruptedException | CsvValidationException | IOException | CSVProcessException ex) {
-                throw new RuntimeException(ex);
+                log.info("Refresh exception for instance {}",instance.getUser(),ex);
             }
         });
     }

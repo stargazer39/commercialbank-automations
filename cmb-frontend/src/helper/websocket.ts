@@ -1,25 +1,27 @@
 import { useEffect, useRef, useState } from "react";
-import { BASE_URL } from "../api/auth";
-import { useQuery } from "@tanstack/react-query";
+import Configuration from "../config";
+import { Client } from "@stomp/stompjs";
 
 interface WebSocketConfig {
   url: string;
   onMessage?: (message: any) => void;
   reconnect?: boolean;
   beforeReconnect?: () => any;
+  topic: string;
+  accessToken?: string;
 }
 
 interface WebSocketState {
   status: "connecting" | "connected" | "error" | "closed";
 }
 
-const BASE_WEBSOCKET_URL = "ws://localhost:8080";
-
 const useWebSocket = ({
   url,
   onMessage,
   reconnect = false,
   beforeReconnect,
+  accessToken,
+  topic,
 }: WebSocketConfig) => {
   const [status, setStatus] = useState<WebSocketState>({
     status: "connecting",
@@ -28,36 +30,24 @@ const useWebSocket = ({
   const recon = useRef(true);
 
   useEffect(() => {
-    const websocket = new WebSocket(url);
-    websocket.onopen = () => {
-      console.log("websocket open");
-      setStatus({ status: "connected" });
-    };
+    const client = new Client({
+      brokerURL: url,
+      onConnect: () => {
+        setStatus({ status: "connected" });
+        client.subscribe(topic, (message) => {
+          console.log(`Received: ${message.body}`);
+          onMessage?.(message.body);
+        });
+      },
+      connectHeaders: {
+        passcode: accessToken ?? "",
+      },
+    });
 
-    websocket.onerror = (e) => {
-      console.error(e);
-      setStatus({ status: "error" });
-      setTimeout(() => {
-        recon.current = !recon.current;
-      }, 1000);
-    };
-
-    websocket.onmessage = (m) => {
-      console.log("websocket message");
-      onMessage?.(m.data);
-    };
-
-    websocket.onclose = () => {
-      console.log("websocket closed");
-      setStatus({ status: "closed" });
-      setTimeout(() => {
-        recon.current = !recon.current;
-      }, 1000);
-    };
+    client.activate();
 
     return () => {
-      console.log("websocket closed (render)");
-      websocket.close();
+      client.deactivate();
     };
   }, [url, reconnect, recon.current]);
 
@@ -69,8 +59,10 @@ const useTransactionUpdates = (
   accessToken: string
 ) => {
   return useWebSocket({
-    url: BASE_WEBSOCKET_URL + "/events/transactions?token=" + accessToken,
+    url: Configuration.getWebsocketEndpoint("/events"),
+    topic: Configuration.getTransactionsTopic(),
     reconnect: true,
+    accessToken,
     onMessage(message) {
       console.log("message", message);
       onUpdate(message);

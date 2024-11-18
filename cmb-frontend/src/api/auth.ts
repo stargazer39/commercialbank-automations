@@ -1,3 +1,5 @@
+import Configuration from "../config";
+
 interface Credentials {
   username: string;
   password: string;
@@ -30,8 +32,6 @@ interface TransactionList {
   transactionList: Transaction[];
 }
 
-const BASE_URL = "http://localhost:8080";
-
 async function login({ username, password }: Credentials): Promise<Tokens> {
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
@@ -46,8 +46,11 @@ async function login({ username, password }: Credentials): Promise<Tokens> {
     headers: myHeaders,
     body: raw,
   };
-
-  let response = await fetch(BASE_URL + "/user/token", requestOptions);
+  console.log(Configuration.getAPIEndpoint("/user/token"))
+  let response = await fetch(
+    Configuration.getAPIEndpoint("/user/token"),
+    requestOptions
+  );
 
   if (!response.ok) {
     throw new Error("login response was not okay");
@@ -70,7 +73,7 @@ async function getTransactions({
   };
 
   const response = await fetch(
-    BASE_URL + `/transactions?page=${page}&size=${size}`,
+    Configuration.getAPIEndpoint(`/transactions?page=${page}&size=${size}`),
     requestOptions
   );
 
@@ -81,5 +84,5 @@ async function getTransactions({
   return response.json();
 }
 
-export { login, getTransactions, BASE_URL };
+export { login, getTransactions };
 export type { Credentials, Transaction, TransactionList };
