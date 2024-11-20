@@ -43,7 +43,7 @@ public class AccountsService {
         transactionsScanLogRepository.save(transactionScanLog);
 
         if(!newTransaction.isEmpty()) {
-            eventManagerService.sendTransactionScanLogEvent(transactionScanLog);
+            eventManagerService.sendTransactionScanLogEvent(transactionScanLog, instance.getUser());
         }
     }
 }

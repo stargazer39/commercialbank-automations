@@ -7,6 +7,7 @@ public class User {
     String username;
     String password;
     Combank combank;
+    String gotifyToken;
 
     @Data
     public static class Combank {
