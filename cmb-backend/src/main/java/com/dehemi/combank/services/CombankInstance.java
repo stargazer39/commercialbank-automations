@@ -92,12 +92,20 @@ public class CombankInstance {
         List<Account> accounts = new ArrayList<>();
 
         WebElement savingsElement = this.driver.findElement(By.cssSelector("div[ng-if=\"displayAccountGroupType(accountGroup, 'savings')\"]"));
+        WebElement creditCardElements = this.driver.findElement(By.cssSelector("div[ng-if=\"displayAccountGroupType(accountGroup, 'credit-card')\"]"));
+
         List<WebElement> savingsAccountElements = savingsElement.findElements(By.cssSelector(".savings"));
+        List<WebElement> creditCardElementsElements = creditCardElements.findElements(By.cssSelector(".credit-card"));
+        savingsAccountElements.addAll(creditCardElementsElements);
+
         for(WebElement accountElement : savingsAccountElements){
             List<WebElement> spans = accountElement.findElements(By.cssSelector("span"));
             String accountName = spans.get(0).getText();
             String accountType = spans.get(1).getText();
 
+            if(accountType.isEmpty()) {
+                accountType = "credit-card";
+            }
             By totalSelector = By.xpath("//span[contains(@class,'current total')]");
             By availableTotalSelector = By.xpath("//span[contains(@class,'available total')]");
 
@@ -181,7 +189,7 @@ public class CombankInstance {
 
             devTools.addListener(Network.responseReceived(), responseReceived -> {
                 Response response = responseReceived.getResponse();
-                if(response.getUrl().contains("accountdetails/downloadreport")) {
+                if(response.getUrl().contains("downloadreport")) {
                     log.info("Intercepted Response URL: " + response.getUrl());
 
                     // Get the response body using the requestId
@@ -233,11 +241,15 @@ public class CombankInstance {
                 continue;
             }
 
-            if(list[1].isEmpty() || list[8].isEmpty()) {
-                if(list[2].toLowerCase(Locale.ROOT).contains("generate")) {
-                    break;
-                }
-                throw new CSVProcessException();
+            if(list[1].isEmpty() && list[2].toLowerCase(Locale.ROOT).contains("generate")) {
+//                if(list[8].isEmpty() && !account.getAccountType().contains("credit-card")) { // Index 8 can be empty in credit card reports.
+//                    throw new CSVProcessException();
+//                }
+//                if(list[2].toLowerCase(Locale.ROOT).contains("generate")) {
+//                    break;
+//                }
+                break;
+//                throw new CSVProcessException();
             }
 
             Transaction transaction = new Transaction();

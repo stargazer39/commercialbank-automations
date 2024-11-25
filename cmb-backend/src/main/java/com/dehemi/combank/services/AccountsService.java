@@ -36,7 +36,7 @@ public class AccountsService {
         transactionScanLog.setNewLogs(newTransaction.size());
         transactionScanLog.setAccountNumber(a.getAccountNumber());
         transactionScanLog.setUserId(instance.getUser().getUsername());
-        transactionScanLog.setNewTransactions(newTransaction);
+        transactionScanLog.setNewTransactions(newTransaction.reversed());
 
         transactionsScanLogRepository.save(transactionScanLog);
 
