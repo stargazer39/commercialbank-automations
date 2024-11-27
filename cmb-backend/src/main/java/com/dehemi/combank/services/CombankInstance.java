@@ -164,16 +164,20 @@ public class CombankInstance {
             driver.findElement(By.xpath("//input[@id='toDate']")).click();
             String toMonth = driver.findElement(By.xpath("//select[@aria-label='Select month']")).getAttribute("value");
             String toYear = driver.findElement(By.xpath("//select[@aria-label='Select year']")).getAttribute("value");
+            String toDate = driver.findElement(By.cssSelector(".ui-state-default.ui-state-highlight.ui-state-active.ui-state-hover")).getAttribute("data-date");
+
             int lastYear = (Integer.parseInt(toYear) - 1);
             int lastMonth = (Integer.parseInt(toMonth) + 1);
+            int nextDay = (Integer.parseInt(toDate) + 1);
 
             driver.findElement(By.xpath("//input[@id='fromDate']")).click();
 
-            driver.findElement(By.xpath("//table[@class='ui-datepicker-calendar']//option[@value='']"));
-            driver.executeScript("$(\"[aria-label='Select month']\")[0].value = " + lastMonth);
+//            driver.findElement(By.xpath("//table[@class='ui-datepicker-calendar']//option[@value='1']"));
+            driver.executeScript("$(\"[aria-label='Select month']\")[0].value = " + toMonth);
 
             driver.executeScript("$(\"[aria-label='Select year']\")[0].value = " + lastYear);
-            driver.findElement(By.xpath("//table[@class='ui-datepicker-calendar']//a[normalize-space()='1']")).click();
+
+            driver.findElement(By.xpath(String.format("//table[@class='ui-datepicker-calendar']//a[normalize-space()='%d']",nextDay))).click();
             driver.findElement(By.xpath("//input[@value='Apply Filters']")).click();
             this.waitForLoading();
         }

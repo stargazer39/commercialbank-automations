@@ -1,0 +1,120 @@
+consider tags ['foot','travel','subscription','groceries','shopping','other'] and fill the 'defaultTag' attribute in bellow json with one of the tags. consider only the description when  generating the tag. return the filled json with hash, description,defaultTag only. nothing more than the filled json. do not hallucinate.
+extra hints on categorizing
+<hints>uber eats is food</hints>
+<json>
+[ {
+  "hash" : "a829dc39ecc9dbc5ff53537a62395f77696a730c8a01939986379497ed695d97",
+  "description" : "MONTHLY SERVICE CHARGE (SAV) / - / -"
+}, {
+  "hash" : "fc9a973a230740f5a6974e67622121037d31adf44c4f555bf8b4ebb58dfed599",
+  "description" : "AL2022 MANAGEMENT SYS / Bene/OrgBK/AC:Ms. D.K. WEERAKK / /7083003 /003010518215"
+}, {
+  "hash" : "0101a8f5ccd9ede4f7c15783fdb00e34b51d30a7bcdf30bcf7a2a99a2cc150e1",
+  "description" : "IB Paid to 432572******1368 / 20241025160931 / US 20241025 160931"
+}, {
+  "hash" : "875b1157841f96b7e01409ddebba515c35db56f91e296d2e2e21782bd405566f",
+  "description" : "FAST CASH HOMAGAMA-1 BR / 020262328017 / -"
+}, {
+  "hash" : "0e4c8bab81899613a5450104eaec9f94878b69bd2aba5dae3ddae9829cc99411",
+  "description" : "PURCHASE UBER EATS / 020251440315 / -"
+}, {
+  "hash" : "97c20d05d88dd6bc05dc6fb277f9984b92828744a38b1483c8503ceb818b2fb8",
+  "description" : "PURCHASE ARPICO SUPER HOMAGA / 020241261799 / -"
+}, {
+  "hash" : "209d276ce95238790e61631911f0441ab0f72259bb99fe628bdb93f642896d1b",
+  "description" : "PURCHASE ARPICO SUPER HOMAGA / 020241238137 / -"
+}, {
+  "hash" : "bf59aa798fbe9cdc543d6eb17462cb6bdea5cdc7c15e96e9d935b4b575e87908",
+  "description" : "INTEREST / - / -"
+}, {
+  "hash" : "72f8e940d8a125599fef4f296b6c92095fd74b50e955eb70936dc9a571433386",
+  "description" : "ADVANCE INCOME TAX / - / -"
+}, {
+  "hash" : "c7f90d0b5171997a1ac92eab29499d6c06c0d6915dbc0c6fff3d4cfa883a65de",
+  "description" : "PURCHASE OPENAI *CHATGPT SUB / 020284167169 / -"
+}, {
+  "hash" : "28cb7a05ae338f8c5dd5fe9bdde325cb2b856392e708b96f351361f29424f072",
+  "description" : "loan / O400043790703 / MR K SHADEEKA NIMESH CHANDRASE"
+}, {
+  "hash" : "b1e316ad691b3b58e6eb467860c5b3c9ca05d1cd05c5aa8cd1f39774c70a63c9",
+  "description" : "PURCHASE UBER / 020287743569 / -"
+}, {
+  "hash" : "60b60603a370ee4cbe4b958f331e2933c110ff5d9f721173c7614581e586602c",
+  "description" : "PURCHASE Google One / 020285574742 / -"
+}, {
+  "hash" : "a2e935a8b731bb2de0d2bb784a9d4503219ccfce51fe4d0a2f31eacc25e57e76",
+  "description" : "PURCHASE LINODE . AKAMAI / 020310140116 / -"
+}, {
+  "hash" : "1789ab8bfdb4971dad09013ce3b066005b96dd716bfb106ab6ffebbee911cf60",
+  "description" : "PURCHASE MOBITEL (PVT) LTD / 020287996146 / -"
+}, {
+  "hash" : "65e1bea33676b977d8533cb4d183c5650c2b6f563bf6db17ce0e69d81033a79c",
+  "description" : "PURCHASE DIYONS CHINESE FOOD / 020296416781 / -"
+}, {
+  "hash" : "81351df05a32a6b33fabbe7e312465f8e1ccb67bfb4bbc5e8a11b7bf81183f1e",
+  "description" : "PURCHASE UBER EATS / 020305922208 / -"
+}, {
+  "hash" : "074f6b65fdd8c5d909c0789962c3c7b78fe95052ce25d248ae48196bf453ba90",
+  "description" : "PURCHASE DONER & DURUM / 020344516310 / -"
+}, {
+  "hash" : "d930ccb719fd722c858cb11762a9395d9b31d9cab7af18a34dde6db2b047599f",
+  "description" : "Shadeek 10k / O400044835646 / K SHADEEKA NIMESH CHANDRASENA"
+}, {
+  "hash" : "0cef52f98f9a686fd44e724d3add09d2f9b56327fe9f104ca2d8406f8bc039ec",
+  "description" : "FAST CASH HOMAGAMA-1 BR / 020361587864 / -"
+}, {
+  "hash" : "6323a0b67711eebcef7031af08081fe0a8f012f46822ba6ca71d92790e0855b3",
+  "description" : "PURCHASE UBER / 020368279263 / -"
+}, {
+  "hash" : "b76e6d8c9461e69b84512edefffed0352841c964f981d80254885ed33775552c",
+  "description" : "PURCHASE UBER / 020370904569 / -"
+}, {
+  "hash" : "aaa8e8935982cb38e3c3f9088f04d063fb98ba90e6067f07c06bf9cf9c0f631c",
+  "description" : "PURCHASE CARGILLS EXPRESS - / 020372234028 / -"
+}, {
+  "hash" : "56f3ee11fe94a9cb11bd79311e8f06e1cdc242fe481862f04da551d750020e89",
+  "description" : "PURCHASE IVY LANE COLOMBO / 020368118072 / -"
+}, {
+  "hash" : "30ef8160dffedfa8c4c1632542a3c5acb7a206854321ff010e0f410db6e4367a",
+  "description" : "Money / O400045674131 / MR CHANDUPA SANHITHA WEERAKKOD"
+}, {
+  "hash" : "26376f06cea3e0c117dd9c9bb98819cf50c8c7383baac552d079b1a6830f12d5",
+  "description" : "PURCHASE ARPICO SUPER CENTER / 020388951032 / -"
+}, {
+  "hash" : "9de983ac49ff8b4c4b281f85115a7bc7485e6c7f83e84576dedf707416761cb8",
+  "description" : "PURCHASE UBER EATS / 020393372977 / -"
+}, {
+  "hash" : "2f8171cb466edf9e0f8be0ea8551fc83266116aa247c1ae4afe579542f0816ed",
+  "description" : "PURCHASE Google Play Pass / 020448735863 / -"
+}, {
+  "hash" : "491f5314195402d9c983719d8d54ea2229cc6a566b776d3ae505929014770fc6",
+  "description" : "PURCHASE CHANDRASIRI & SONS / 020455667050 / -"
+}, {
+  "hash" : "84b7edfc2ba7b2f564b9347ae58124b343df1aae8ac58dc6d3b187dde40cf77d",
+  "description" : "PURCHASE ARPICO SUPER CENTER / 020484489490 / -"
+}, {
+  "hash" : "abd68489ce8c4852d1dc0eb7010fa81edaaabcf8ee0d707ffcedfc9506dd1c35",
+  "description" : "RETURN SAV DONER & DURUM / 020516887994 / -"
+}, {
+  "hash" : "762878ccfd557af6dd3b83c484b86ca203a62b29b234a72d65b9925b57b8b664",
+  "description" : "PUBUDU ELECTONICS HOMAGAMA COLK / 481687 / -"
+}, {
+  "hash" : "5e356b6ea7a3884388da94225b50046d8994b25d685f231c11120b121c9c04cd",
+  "description" : "UBER EATS CBH LK / 412658 / -"
+}, {
+  "hash" : "3bf928c8cb748fdb288725c41e80a2674e75ac5a2a220634a156cd2424f9cbab",
+  "description" : "ARPICO SUPER CENTER-HO SRI LANKA LK / 066331 / -"
+}, {
+  "hash" : "7204f37044a9a2ec8419a3ffde9cf99ca42ad9eec94bd81e7d74303b3b4a22d5",
+  "description" : "UBER EATS CBH LK / 931356 / -"
+}, {
+  "hash" : "a1c802068b77e7281df833f6dd2d42472731eff25a5082cd190c2c64167131d8",
+  "description" : "ONEPROVIDER 5142860253 QCCA / 933586 / -"
+}, {
+  "hash" : "212cd46878258a27792a4954e371087c6381431902dacb9b358c7cad97945714",
+  "description" : "ARPICO SUPER HOMAGAMA -HOMAGAMA LK / 860965 / -"
+}, {
+  "hash" : "d3a2bc97da574172e6864a3dd90781921dfd4f45de63d60cd77345f66287b699",
+  "description" : "HEALAN HOSPITALS (PVT) HOMAGAMA LK / 855426 / -"
+} ]
+</json>

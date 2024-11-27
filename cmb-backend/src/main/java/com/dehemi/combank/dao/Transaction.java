@@ -1,9 +1,8 @@
 package com.dehemi.combank.dao;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.google.common.hash.Hashing;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -17,6 +16,9 @@ import java.util.List;
 
 @Data
 @Entity
+@Table(uniqueConstraints =
+        { //other constraints
+                @UniqueConstraint(name = "UniqueDefaultTagAndHash", columnNames = { "hash", "defaultTag" })})
 public class Transaction {
     @Id
     private String hash;
@@ -33,6 +35,11 @@ public class Transaction {
     private BigDecimal runningBalance;
     @Column(nullable = false)
     private String accountNumber;
+    @OneToMany(cascade= CascadeType.ALL,orphanRemoval = true,fetch=FetchType.EAGER)
+    private List<TransactionTag> tags;
+    @Column(nullable = false)
+    private Boolean tagsGenerated = false;
+    private String defaultTag;
 
     public Transaction() {
 
