@@ -74,12 +74,13 @@ public class CombankService {
         });
     }
 
-    @Scheduled(initialDelay = 0)
+    @Scheduled(fixedDelay = 60*60*1000)
     public void generateTags() throws IOException {
         log.info("Starting generate tags");
         List<Transaction> transactionList = transactionRepository.findFirst100TagsGeneratedFalse();
 
         if(transactionList.isEmpty()) {
+            log.info("no enough transactions to generate tags");
             return;
         }
 
