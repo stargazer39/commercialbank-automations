@@ -67,27 +67,29 @@ public class CombankService {
     @Scheduled(fixedDelay = 60*60*1000)
     public void generateTags() throws IOException {
         log.info("Starting generate tags");
-        List<Transaction> transactionList = transactionRepository.findFirst100TagsGeneratedFalse();
+        while(true) {
+            List<Transaction> transactionList = transactionRepository.findFirst100TagsGeneratedFalse();
 
-        if(transactionList.isEmpty()) {
-            log.info("no enough transactions to generate tags");
-            return;
+            if(transactionList.isEmpty()) {
+                log.info("no enough transactions to generate tags, STOP!");
+                return;
+            }
+
+            Map<String,Transaction> transactionMap = new HashMap<>();
+
+            for (Transaction transaction : transactionList) {
+                transactionMap.put(transaction.getHash(),transaction);
+            }
+
+            List<AITransaction> aiTransactions = openAI.categorizeTransactions(transactionList);
+
+            for(AITransaction aiTransaction : aiTransactions) {
+                Transaction transaction = transactionMap.get(aiTransaction.getHash());
+                transaction.setDefaultTag(aiTransaction.getDefaultTag());
+                transaction.setTagsGenerated(true);
+            }
+
+            transactionRepository.saveAll(transactionList);
         }
-
-        Map<String,Transaction> transactionMap = new HashMap<>();
-
-        for (Transaction transaction : transactionList) {
-            transactionMap.put(transaction.getHash(),transaction);
-        }
-
-        List<AITransaction> aiTransactions = openAI.categorizeTransactions(transactionList);
-
-        for(AITransaction aiTransaction : aiTransactions) {
-            Transaction transaction = transactionMap.get(aiTransaction.getHash());
-            transaction.setDefaultTag(aiTransaction.getDefaultTag());
-            transaction.setTagsGenerated(true);
-        }
-
-        transactionRepository.saveAll(transactionList);
     }
 }
