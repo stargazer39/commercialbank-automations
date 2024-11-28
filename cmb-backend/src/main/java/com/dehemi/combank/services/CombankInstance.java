@@ -224,65 +224,7 @@ public class CombankInstance {
             throw new RuntimeException("No response received for transactions");
         }
 
-        return processTransactionToCSV(csv, account);
-    }
-
-    private List<Transaction> processTransactionToCSV(String csv, Account account) throws CsvValidationException, IOException, CSVProcessException {
-        CSVReader reader = new CSVReader(new StringReader(csv));
-
-        int pos = -1;
-        List<Transaction> transactions = new ArrayList<>();
-
-        while (true) {
-            String[] list = reader.readNext();
-            pos++;
-
-            if(list == null || list.length == 0) {
-                break;
-            }
-
-            if(pos <= 2) {
-                continue;
-            }
-
-            if(list[1].isEmpty() && list[2].toLowerCase(Locale.ROOT).contains("generate")) {
-//                if(list[8].isEmpty() && !account.getAccountType().contains("credit-card")) { // Index 8 can be empty in credit card reports.
-//                    throw new CSVProcessException();
-//                }
-//                if(list[2].toLowerCase(Locale.ROOT).contains("generate")) {
-//                    break;
-//                }
-                break;
-//                throw new CSVProcessException();
-            }
-
-            Transaction transaction = new Transaction();
-
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
-            transaction.setTransactionDate(LocalDate.parse(list[1], formatter));
-            transaction.setDescription(list[3]);
-            transaction.setCurrency(list[5]);
-
-            if (list[6] != null && !list[6].isEmpty()) {
-                transaction.setDebit(new BigDecimal(list[6].replace(",", "")));
-            }
-
-            if (list[7] != null && !list[7].isEmpty()) {
-                transaction.setCredit((new BigDecimal(list[7].replace(",", ""))));
-            }
-
-            if (list[8] != null && !list[8].isEmpty()) {
-                transaction.setRunningBalance(new BigDecimal(list[8].replace(",", "")));
-            }
-
-            transaction.setAccountNumber(account.getAccountNumber());
-            transaction.setUserId(this.user.getUsername());
-            transaction.computeHash();
-            transactions.add(transaction);
-        }
-
-        return transactions;
+        return CSVProcessor.processTransactionToCSV(csv, account.getAccountNumber(), this.getUser().getUsername());
     }
 
     private void retryIfStale(Runnable task){

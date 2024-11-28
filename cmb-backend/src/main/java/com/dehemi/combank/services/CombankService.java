@@ -7,20 +7,10 @@ import com.dehemi.combank.dao.*;
 import com.dehemi.combank.exceptions.CSVProcessException;
 import com.dehemi.combank.repo.TransactionRepository;
 import com.dehemi.combank.repo.TransactionsScanLogRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
-import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.opencsv.exceptions.CsvValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -99,17 +89,5 @@ public class CombankService {
         }
 
         transactionRepository.saveAll(transactionList);
-
-//
-//        for (Transaction t : transactionList) {
-//            TransactionTag transactionTag = new TransactionTag();
-//            transactionTag.setAi(true);
-//            transactionTag.setTag("ai");
-////            transactionTag.setHash(t.getHash());
-//
-//            t.setTags(List.of());
-//        }
-//
-//        transactionRepository.saveAll(transactionList);
     }
 }
