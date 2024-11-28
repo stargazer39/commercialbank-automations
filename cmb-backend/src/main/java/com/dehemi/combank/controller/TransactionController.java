@@ -2,6 +2,7 @@ package com.dehemi.combank.controller;
 
 import com.dehemi.combank.dao.CSVTransactionUpload;
 import com.dehemi.combank.dao.Transaction;
+import com.dehemi.combank.dao.UploadTransactionResponse;
 import com.dehemi.combank.dao.User;
 import com.dehemi.combank.dao.http.TransactionsResponse;
 import com.dehemi.combank.exceptions.CSVProcessException;
@@ -32,7 +33,8 @@ public class TransactionController {
     }
 
     @PostMapping("csv")
-    public void uploadTransactions(@RequestBody CSVTransactionUpload csvTransactionUpload, @RequestAttribute User user) throws CSVProcessException, CsvValidationException, IOException {
-        transactionService.saveCSVToDB(csvTransactionUpload.getCsv(), csvTransactionUpload.getAccountNumber(), user.getUsername());
+    public UploadTransactionResponse uploadTransactions(@RequestBody CSVTransactionUpload csvTransactionUpload, @RequestAttribute User user) throws CSVProcessException, CsvValidationException, IOException {
+        int saved = transactionService.saveCSVToDB(csvTransactionUpload.getCsv(), csvTransactionUpload.getAccountNumber(), user.getUsername());
+        return new UploadTransactionResponse(saved);
     }
 }

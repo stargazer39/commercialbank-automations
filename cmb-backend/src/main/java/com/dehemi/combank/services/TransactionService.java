@@ -30,9 +30,10 @@ public class TransactionService {
         return transactionRepository.count();
     }
 
-    public void saveCSVToDB(String csv, String accountNumber, String username) throws CSVProcessException, CsvValidationException, IOException {
+    public int saveCSVToDB(String csv, String accountNumber, String username) throws CSVProcessException, CsvValidationException, IOException {
         List<Transaction> transactions = CSVProcessor.processTransactionToCSV(csv, accountNumber, username);
         List<Transaction> transactions1 = transactionRepository.insertAllNew(transactions.reversed());
         log.info("new transactions {}", transactions1.size());
+        return transactions1.size();
     }
 }
