@@ -23,7 +23,7 @@ public class TransactionService {
     }
 
     public Page<Transaction> getTransactions(int page, int size, String userId) {
-        return transactionRepository.findAllByUserId(userId,PageRequest.of(page, size, Sort.by("createdAt").descending()));
+        return transactionRepository.findAllByUserId(userId,PageRequest.of(page, size, Sort.by("transactionDate").descending()));
     }
 
     public Long getTotalTransactions() {
