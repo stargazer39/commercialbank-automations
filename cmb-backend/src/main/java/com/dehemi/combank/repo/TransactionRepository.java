@@ -11,7 +11,6 @@ import java.util.List;
 
 public interface TransactionRepository extends JpaRepository<Transaction,String>, CustomizedTransactionRepo {
     Page<Transaction> findAllByUserId(String userId, Pageable pageable);
-    // Alternatively, using JPQL
     @Query("SELECT t FROM Transaction t WHERE t.tagsGenerated = false OR t.tagsGenerated IS NULL")
-    List<Transaction> findFirst100TagsGeneratedFalse();
+    List<Transaction> findTagsGeneratedFalse(Pageable pageable);
 }

@@ -9,6 +9,7 @@ import com.dehemi.combank.repo.TransactionRepository;
 import com.dehemi.combank.repo.TransactionsScanLogRepository;
 import com.opencsv.exceptions.CsvValidationException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import java.io.IOException;
@@ -42,7 +43,7 @@ public class CombankService {
         this.openAI = openAI;
     }
 
-    @Scheduled(fixedDelay = 10*1000)
+//    @Scheduled(fixedDelay = 10*1000)
     public void refresh() {
         log.info("Starting refresh");
         instances.forEach((key, instance) -> {
@@ -68,8 +69,8 @@ public class CombankService {
     public void generateTags() throws IOException {
         log.info("Starting generate tags");
         while(true) {
-            List<Transaction> transactionList = transactionRepository.findFirst100TagsGeneratedFalse();
-
+            List<Transaction> transactionList = transactionRepository.findTagsGeneratedFalse(PageRequest.of(0, 25));
+            log.info("Generating tags for {} transactions", transactionList.size());
             if(transactionList.isEmpty()) {
                 log.info("no enough transactions to generate tags, STOP!");
                 return;
