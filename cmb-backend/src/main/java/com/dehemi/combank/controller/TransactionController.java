@@ -1,9 +1,6 @@
 package com.dehemi.combank.controller;
 
-import com.dehemi.combank.dao.CSVTransactionUpload;
-import com.dehemi.combank.dao.Transaction;
-import com.dehemi.combank.dao.UploadTransactionResponse;
-import com.dehemi.combank.dao.User;
+import com.dehemi.combank.dao.*;
 import com.dehemi.combank.dao.http.TransactionsResponse;
 import com.dehemi.combank.exceptions.CSVProcessException;
 import com.dehemi.combank.services.TransactionService;
@@ -12,6 +9,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("transactions")
@@ -23,8 +22,8 @@ public class TransactionController {
     }
 
     @GetMapping()
-    public TransactionsResponse getTransactions(@RequestParam int page, @RequestParam int size, @RequestAttribute User user) {
-        Page<Transaction> transactions = transactionService.getTransactions(page-1, size, user.getUsername());
+    public TransactionsResponse getTransactions(@RequestParam int page, @RequestParam int size, @RequestAttribute User user, @RequestParam(required = false) String tag) {
+        Page<Transaction> transactions = transactionService.getTransactions(page-1, size, user.getUsername(),tag);
         return TransactionsResponse
                 .builder()
                 .transactionList(transactions.getContent())
@@ -36,5 +35,13 @@ public class TransactionController {
     public UploadTransactionResponse uploadTransactions(@RequestBody CSVTransactionUpload csvTransactionUpload, @RequestAttribute User user) throws CSVProcessException, CsvValidationException, IOException {
         int saved = transactionService.saveCSVToDB(csvTransactionUpload.getCsv(), csvTransactionUpload.getAccountNumber(), user.getUsername());
         return new UploadTransactionResponse(saved);
+    }
+
+    @GetMapping("debit/by-default-tag")
+    public TransactionSummeryByDefaultTagResponse getTotalDebitGroupedByTag(@RequestAttribute User user, @RequestParam String start, @RequestParam String end, @RequestParam List<String> accountNumber) {
+        LocalDate startDate = LocalDate.parse(start);
+        LocalDate endDate = LocalDate.parse(end);
+        List<TransactionSummeryByDefaultTag> totalDebitByTag = transactionService.getTotalDebitByTag(user.getUsername(), startDate, endDate, accountNumber);
+        return new TransactionSummeryByDefaultTagResponse(totalDebitByTag);
     }
 }
