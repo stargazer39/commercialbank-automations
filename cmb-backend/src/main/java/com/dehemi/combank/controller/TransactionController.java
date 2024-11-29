@@ -22,12 +22,13 @@ public class TransactionController {
     }
 
     @GetMapping()
-    public TransactionsResponse getTransactions(@RequestParam int page, @RequestParam int size, @RequestAttribute User user, @RequestParam(required = false) String tag) {
-        Page<Transaction> transactions = transactionService.getTransactions(page-1, size, user.getUsername(),tag);
+    public TransactionsResponse getTransactions(@RequestParam int page, @RequestParam int size, @RequestAttribute User user, @RequestParam(required = false) String tag,@RequestParam(required = false) LocalDate start, @RequestParam(required = false) LocalDate end, @RequestParam List<String> accountNumber) {
+        Page<Transaction> transactions = transactionService.getTransactions(page-1, size, user.getUsername(),tag,start,end,accountNumber);
         return TransactionsResponse
                 .builder()
                 .transactionList(transactions.getContent())
                 .totalPages(transactions.getTotalPages())
+                .totalItems(transactions.getTotalElements())
                 .build();
     }
 

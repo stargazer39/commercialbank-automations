@@ -11,4 +11,5 @@ import java.util.List;
 public class TransactionsResponse {
     List<Transaction> transactionList;
     int totalPages;
+    long totalItems;
 }

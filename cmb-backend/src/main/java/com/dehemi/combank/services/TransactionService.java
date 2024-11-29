@@ -5,11 +5,13 @@ import com.dehemi.combank.dao.TransactionSummeryByDefaultTag;
 import com.dehemi.combank.dao.User;
 import com.dehemi.combank.exceptions.CSVProcessException;
 import com.dehemi.combank.repo.TransactionRepository;
+import com.dehemi.combank.specs.TransactionSpecifications;
 import com.opencsv.exceptions.CsvValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -28,11 +30,21 @@ public class TransactionService {
         this.transactionRepository = transactionRepository;
     }
 
-    public Page<Transaction> getTransactions(int page, int size, String userId, String tag) {
-        if(tag != null) {
-            return transactionRepository.findAllByUserIdAndDefaultTag(userId, tag, PageRequest.of(page, size));
+    public Page<Transaction> getTransactions(int page, int size, String userId, String tag, LocalDate fromDate, LocalDate toDate, List<String> accountNumber) {
+        Specification<Transaction> spec = Specification.where(TransactionSpecifications.hasUserId(userId));
+
+        if (tag != null) {
+            spec = spec.and(TransactionSpecifications.hasTag(tag));
         }
-        return transactionRepository.findAllByUserId(userId,PageRequest.of(page, size, Sort.by("transactionDate").descending()));
+        if (fromDate != null && toDate != null) {
+            spec = spec.and(TransactionSpecifications.hasTransactionDateBetween(fromDate, toDate));
+        }
+
+        if(accountNumber != null && !accountNumber.isEmpty()) {
+            spec = spec.and(TransactionSpecifications.hasAccountNumbers(accountNumber));
+        }
+
+        return transactionRepository.findAll(spec, PageRequest.of(page, size, Sort.by("transactionDate").descending()));
     }
 
     public Long getTotalTransactions() {
