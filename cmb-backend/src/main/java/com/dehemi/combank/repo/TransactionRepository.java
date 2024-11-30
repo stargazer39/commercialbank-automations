@@ -36,5 +36,20 @@ public interface TransactionRepository extends JpaRepository<Transaction,String>
     GROUP BY
         defaultTag
     """)
-    List<Object[]> findTotalDebitByTag(LocalDate start, LocalDate end, List<String> accountNumbers, String userId);
+    List<Object[]> findTotalDebitByTagByAndAccountNumber(LocalDate start, LocalDate end, List<String> accountNumbers, String userId);
+    @Query("""
+    SELECT
+        defaultTag,
+        SUM(debit) AS total_debit,
+        COUNT(hash) AS total_count
+    FROM
+        Transaction
+    WHERE
+        userId = :userId AND
+        transactionDate BETWEEN :start AND :end AND
+        debit > 0
+    GROUP BY
+        defaultTag
+    """)
+    List<Object[]> findTotalDebitByTag(LocalDate start, LocalDate end, String userId);
 }

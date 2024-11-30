@@ -40,7 +40,7 @@ public class TransactionController {
     }
 
     @GetMapping("debit/by-default-tag")
-    public TransactionSummeryByDefaultTagResponse getTotalDebitGroupedByTag(@RequestAttribute User user, @RequestParam String start, @RequestParam String end, @RequestParam List<String> accountNumber) {
+    public TransactionSummeryByDefaultTagResponse getTotalDebitGroupedByTag(@RequestAttribute User user, @RequestParam String start, @RequestParam String end, @RequestParam(required = false) List<String> accountNumber) {
         LocalDate startDate = LocalDate.parse(start);
         LocalDate endDate = LocalDate.parse(end);
         List<TransactionSummeryByDefaultTag> totalDebitByTag = transactionService.getTotalDebitByTag(user.getUsername(), startDate, endDate, accountNumber);

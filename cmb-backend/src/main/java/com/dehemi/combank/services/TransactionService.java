@@ -61,7 +61,15 @@ public class TransactionService {
     }
 
     public List<TransactionSummeryByDefaultTag> getTotalDebitByTag(String userId, LocalDate start, LocalDate end, List<String> accountNumber) {
-        return transactionRepository.findTotalDebitByTag(start, end, accountNumber, userId).stream().map(result -> new TransactionSummeryByDefaultTag(
+        if(accountNumber == null || accountNumber.isEmpty()) {
+            return transactionRepository.findTotalDebitByTag(start, end, userId).stream().map(result -> new TransactionSummeryByDefaultTag(
+                    (String) result[0],
+                    (BigDecimal) result[1],
+                    (Long) result[2]
+            )).collect(Collectors.toList());
+        }
+
+        return transactionRepository.findTotalDebitByTagByAndAccountNumber(start, end, accountNumber, userId).stream().map(result -> new TransactionSummeryByDefaultTag(
                 (String) result[0],
                 (BigDecimal) result[1],
                 (Long) result[2]
