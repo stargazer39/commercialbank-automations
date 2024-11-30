@@ -23,7 +23,7 @@ public class TransactionController {
     }
 
     @GetMapping()
-    public TransactionsResponse getTransactions(@RequestParam int page, @RequestParam int size, @RequestAttribute User user, @RequestParam(required = false) String tag,@RequestParam(required = false) LocalDate start, @RequestParam(required = false) LocalDate end, @RequestParam List<String> accountNumber) {
+    public TransactionsResponse getTransactions(@RequestParam int page, @RequestParam int size, @RequestAttribute User user, @RequestParam(required = false) String tag,@RequestParam(required = false) LocalDate start, @RequestParam(required = false) LocalDate end, @RequestParam(required = false) List<String> accountNumber) {
         Page<Transaction> transactions = transactionService.getTransactions(page-1, size, user.getUsername(),tag,start,end,accountNumber);
         return TransactionsResponse
                 .builder()
