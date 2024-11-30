@@ -6,6 +6,8 @@ import com.dehemi.combank.dao.User;
 import com.dehemi.combank.exceptions.CSVProcessException;
 import com.dehemi.combank.repo.TransactionRepository;
 import com.dehemi.combank.specs.TransactionSpecifications;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.opencsv.exceptions.CsvValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -64,5 +66,14 @@ public class TransactionService {
                 (BigDecimal) result[1],
                 (Long) result[2]
         )).collect(Collectors.toList());
+    }
+
+    public void updateTransactionByHash(String hash, JsonNode jsonNode, String userId) {
+        Transaction firstByHash = transactionRepository.findFirstByHashAndUserId(hash,userId);
+        if(jsonNode.has("defaultTag")) {
+            firstByHash.setDefaultTag(jsonNode.get("defaultTag").asText());
+        }
+
+        transactionRepository.save(firstByHash);
     }
 }

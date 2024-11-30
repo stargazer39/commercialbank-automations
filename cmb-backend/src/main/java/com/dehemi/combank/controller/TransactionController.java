@@ -4,6 +4,7 @@ import com.dehemi.combank.dao.*;
 import com.dehemi.combank.dao.http.TransactionsResponse;
 import com.dehemi.combank.exceptions.CSVProcessException;
 import com.dehemi.combank.services.TransactionService;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.opencsv.exceptions.CsvValidationException;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -44,5 +45,10 @@ public class TransactionController {
         LocalDate endDate = LocalDate.parse(end);
         List<TransactionSummeryByDefaultTag> totalDebitByTag = transactionService.getTotalDebitByTag(user.getUsername(), startDate, endDate, accountNumber);
         return new TransactionSummeryByDefaultTagResponse(totalDebitByTag);
+    }
+
+    @PatchMapping("{hash}")
+    public void updateTransaction(@PathVariable("hash") String hash, @RequestAttribute User user, @RequestBody JsonNode transaction) {
+        transactionService.updateTransactionByHash(hash,transaction, user.getUsername());
     }
 }

@@ -16,6 +16,7 @@ public interface TransactionRepository extends JpaRepository<Transaction,String>
     Page<Transaction> findAllByUserId(String userId, Pageable pageable);
     Page<Transaction> findAllByUserIdAndDefaultTagAndTransactionDateIsBetween(String userId,String defaultTag,LocalDate start,LocalDate end, Pageable pageable);
     Page<Transaction> findAllByUserIdAndDefaultTag(String userId,String defaultTag, Pageable pageable);
+    Transaction findFirstByHashAndUserId(String hash, String userId);
 
     @Query("SELECT t FROM Transaction t WHERE t.tagsGenerated = false OR t.tagsGenerated IS NULL")
     List<Transaction> findTagsGeneratedFalse(Pageable pageable);
