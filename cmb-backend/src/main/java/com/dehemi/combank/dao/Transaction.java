@@ -33,13 +33,17 @@ public class Transaction {
     private BigDecimal debit;
     private BigDecimal credit;
     private BigDecimal runningBalance;
-    @Column(nullable = false)
-    private String accountNumber;
+    @ManyToOne
+    @JoinColumn(name = "account_number", referencedColumnName = "accountNumber", nullable = false)
+    private Account account;
     @OneToMany(cascade= CascadeType.ALL,orphanRemoval = true,fetch=FetchType.EAGER)
     private List<TransactionTag> tags;
     @Column(nullable = false)
     private Boolean tagsGenerated = false;
     private String defaultTag;
+    @Column(nullable = false)
+    private TransactionType transactionType;
+    private String userDescription;
 
     public Transaction() {
 
@@ -51,7 +55,7 @@ public class Transaction {
                 currency +
                 debit +
                 credit +
-                runningBalance + accountNumber;
+                runningBalance + account.getAccountNumber();
 
         this.setHash(Hashing.sha256()
                 .hashString(hash, StandardCharsets.UTF_8)

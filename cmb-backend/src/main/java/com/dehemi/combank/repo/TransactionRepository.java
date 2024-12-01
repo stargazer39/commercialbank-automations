@@ -2,6 +2,7 @@ package com.dehemi.combank.repo;
 
 import com.dehemi.combank.dao.Transaction;
 import com.dehemi.combank.dao.TransactionSummeryByDefaultTag;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,7 +18,6 @@ public interface TransactionRepository extends JpaRepository<Transaction,String>
     Page<Transaction> findAllByUserIdAndDefaultTagAndTransactionDateIsBetween(String userId,String defaultTag,LocalDate start,LocalDate end, Pageable pageable);
     Page<Transaction> findAllByUserIdAndDefaultTag(String userId,String defaultTag, Pageable pageable);
     Transaction findFirstByHashAndUserId(String hash, String userId);
-
     @Query("SELECT t FROM Transaction t WHERE t.tagsGenerated = false OR t.tagsGenerated IS NULL")
     List<Transaction> findTagsGeneratedFalse(Pageable pageable);
 
@@ -30,7 +30,7 @@ public interface TransactionRepository extends JpaRepository<Transaction,String>
         Transaction
     WHERE
         userId = :userId AND
-        accountNumber IN (:accountNumbers) AND
+        account.accountNumber IN (:accountNumbers) AND
         transactionDate BETWEEN :start AND :end AND
         debit > 0
     GROUP BY

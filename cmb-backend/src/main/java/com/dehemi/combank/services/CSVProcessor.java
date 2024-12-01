@@ -1,6 +1,8 @@
 package com.dehemi.combank.services;
 
+import com.dehemi.combank.dao.Account;
 import com.dehemi.combank.dao.Transaction;
+import com.dehemi.combank.dao.TransactionType;
 import com.dehemi.combank.exceptions.CSVProcessException;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
@@ -16,7 +18,7 @@ import java.util.Locale;
 
 
 public class CSVProcessor {
-    public static List<Transaction> processTransactionToCSV(String csv, String accountNumber, String username) throws CsvValidationException, IOException, CSVProcessException {
+    public static List<Transaction> processTransactionToCSV(String csv, Account account, String username) throws CsvValidationException, IOException, CSVProcessException {
         CSVReader reader = new CSVReader(new StringReader(csv));
 
         int pos = -1;
@@ -52,6 +54,8 @@ public class CSVProcessor {
             transaction.setTransactionDate(LocalDate.parse(list[1], formatter));
             transaction.setDescription(list[3]);
             transaction.setCurrency(list[5]);
+            transaction.setAccount(account);
+
 
             if (list[6] != null && !list[6].isEmpty()) {
                 transaction.setDebit(new BigDecimal(list[6].replace(",", "")));
@@ -65,7 +69,7 @@ public class CSVProcessor {
                 transaction.setRunningBalance(new BigDecimal(list[8].replace(",", "")));
             }
 
-            transaction.setAccountNumber(accountNumber);
+            transaction.setTransactionType((transaction.getDebit() == null) ? TransactionType.CREDIT : TransactionType.DEBIT);
             transaction.setUserId(username);
             transaction.computeHash();
             transactions.add(transaction);

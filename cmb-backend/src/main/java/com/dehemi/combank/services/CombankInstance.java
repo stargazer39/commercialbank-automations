@@ -102,10 +102,14 @@ public class CombankInstance {
             List<WebElement> spans = accountElement.findElements(By.cssSelector("span"));
             String accountName = spans.get(0).getText();
             String accountType = spans.get(1).getText();
+            String aClass = accountElement.getAttribute("class");
 
-            if(accountType.isEmpty()) {
-                accountType = "credit-card";
+            if(aClass.contains("savings")) {
+                accountType =  "Savings";
+            } else if(aClass.contains("credit-card")) {
+                accountType =  "CreditCard";
             }
+
             By totalSelector = By.xpath("//span[contains(@class,'current total')]");
             By availableTotalSelector = By.xpath("//span[contains(@class,'available total')]");
 
@@ -117,7 +121,13 @@ public class CombankInstance {
             String availableTotal = accountElement.findElement(availableTotalSelector).getText();
 
             log.info("found account {} {}", accountName, accountType);
-            accounts.add(new Account(accountName, accountType, availableTotal, total));
+            Account account = new Account();
+            account.setAccountNumber(accountName);
+            account.setAccountType(accountType);
+            account.setCurrentTotal(total);
+            account.setAvailableTotal(availableTotal);
+
+            accounts.add(account);
         }
 
         return accounts;
@@ -224,7 +234,7 @@ public class CombankInstance {
             throw new RuntimeException("No response received for transactions");
         }
 
-        return CSVProcessor.processTransactionToCSV(csv, account.getAccountNumber(), this.getUser().getUsername());
+        return CSVProcessor.processTransactionToCSV(csv, account, this.getUser().getUsername());
     }
 
     private void retryIfStale(Runnable task){

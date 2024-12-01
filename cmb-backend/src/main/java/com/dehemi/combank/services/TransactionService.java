@@ -4,6 +4,7 @@ import com.dehemi.combank.dao.Transaction;
 import com.dehemi.combank.dao.TransactionSummeryByDefaultTag;
 import com.dehemi.combank.dao.User;
 import com.dehemi.combank.exceptions.CSVProcessException;
+import com.dehemi.combank.repo.AccountRepository;
 import com.dehemi.combank.repo.TransactionRepository;
 import com.dehemi.combank.specs.TransactionSpecifications;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -28,8 +29,11 @@ import java.util.stream.Collectors;
 @Slf4j
 public class TransactionService {
     final TransactionRepository transactionRepository;
-    public TransactionService(TransactionRepository transactionRepository) {
+    private final AccountRepository accountRepository;
+
+    public TransactionService(TransactionRepository transactionRepository, AccountRepository accountRepository) {
         this.transactionRepository = transactionRepository;
+        this.accountRepository = accountRepository;
     }
 
     public Page<Transaction> getTransactions(int page, int size, String userId, String tag, LocalDate fromDate, LocalDate toDate, List<String> accountNumber) {
@@ -54,7 +58,7 @@ public class TransactionService {
     }
 
     public int saveCSVToDB(String csv, String accountNumber, String username) throws CSVProcessException, CsvValidationException, IOException {
-        List<Transaction> transactions = CSVProcessor.processTransactionToCSV(csv, accountNumber, username);
+        List<Transaction> transactions = CSVProcessor.processTransactionToCSV(csv, accountRepository.getReferenceById(accountNumber), username);
         List<Transaction> transactions1 = transactionRepository.insertAllNew(transactions.reversed());
         log.info("new transactions {}", transactions1.size());
         return transactions1.size();

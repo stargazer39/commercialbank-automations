@@ -5,6 +5,7 @@ import com.dehemi.combank.config.TimeoutConfig;
 import com.dehemi.combank.config.UsersConfig;
 import com.dehemi.combank.dao.*;
 import com.dehemi.combank.exceptions.CSVProcessException;
+import com.dehemi.combank.repo.AccountRepository;
 import com.dehemi.combank.repo.TransactionRepository;
 import com.dehemi.combank.repo.TransactionsScanLogRepository;
 import com.opencsv.exceptions.CsvValidationException;
@@ -27,8 +28,9 @@ public class CombankService {
     final AccountsService accountsService;
     final TimeoutConfig timeoutConfig;
     private final OpenAI openAI;
+    private final AccountRepository accountRepository;
 
-    public CombankService(UsersConfig usersConfig, SeleniumService seleniumService, TransactionRepository transactionRepository, TransactionsScanLogRepository transactionsScanLogRepository, AccountsService accountsService, TimeoutConfig timeoutConfig, OpenAI openAI) {
+    public CombankService(UsersConfig usersConfig, SeleniumService seleniumService, TransactionRepository transactionRepository, TransactionsScanLogRepository transactionsScanLogRepository, AccountsService accountsService, TimeoutConfig timeoutConfig, OpenAI openAI, AccountRepository accountRepository) {
             this.seleniumService = seleniumService;
             this.transactionRepository = transactionRepository;
             this.transactionsScanLogRepository = transactionsScanLogRepository;
@@ -41,9 +43,10 @@ public class CombankService {
                 instances.put(e.getKey(),new CombankInstance(e.getValue(), seleniumService.getInstance(), timeoutConfig));
             });
         this.openAI = openAI;
+        this.accountRepository = accountRepository;
     }
 
-//    @Scheduled(fixedDelay = 10*1000)
+    @Scheduled(fixedDelay = 10*1000)
     public void refresh() {
         log.info("Starting refresh");
         instances.forEach((key, instance) -> {
@@ -55,6 +58,8 @@ public class CombankService {
                 log.info("Getting accounts {}", key);
                 List<Account> account = instance.getAccounts();
 
+                accountRepository.saveAll(account);
+
                 for (Account a : account) {
                     accountsService.processAccount(a, instance);
                 }
@@ -65,7 +70,7 @@ public class CombankService {
         });
     }
 
-    @Scheduled(fixedDelay = 60*60*1000)
+    // @Scheduled(fixedDelay = 60*60*1000)
     public void generateTags() throws IOException {
         log.info("Starting generate tags");
         while(true) {
