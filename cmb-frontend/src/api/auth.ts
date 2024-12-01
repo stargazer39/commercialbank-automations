@@ -31,7 +31,11 @@ interface Transaction {
   debit: number | null;
   credit: number | null;
   runningBalance: number;
-  accountNumber: string;
+  account: {
+    accountNumber: string;
+    accountType: "CreditCard" | "Savings"
+  },
+  defaultTag: string;
 }
 
 interface TransactionList {

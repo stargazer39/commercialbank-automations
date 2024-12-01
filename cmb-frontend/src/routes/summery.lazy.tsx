@@ -59,20 +59,34 @@ function RouteComponent() {
 
   return (
     <div className="p-4 h-screen w-screen">
-      <div className="flex flex-row">
-        {data ? (
-          <DebitSummaryPieChart
-            summaryData={data.summery}
-            onSelect={(v: any) => {
-              setTag(v.defaultTag);
-            }}
-            className="w-1/2"
-          />
-        ) : (
-          "Loading..."
-        )}
+      <div className="flex flex-row h-full">
         <div className="w-1/2">
-          <div className="px-4 pb-3">
+          <h2 className="font-bold">
+            Debit Summary - Total: ~{" "}
+            {summeryQuery.data
+              ? Math.round(
+                  summeryQuery.data.summery.reduce(
+                    (accumulator: any, currentValue: any) =>
+                      accumulator + currentValue.totalDebit,
+                    0
+                  )
+                )
+              : null}{" "}
+            Rs
+          </h2>
+          {data ? (
+            <DebitSummaryPieChart
+              summaryData={data.summery}
+              onSelect={(v: any) => {
+                setTag(v.defaultTag);
+              }}
+            />
+          ) : (
+            "Loading..."
+          )}
+        </div>
+        <div className="w-1/2 h-full">
+          <div className="px-4 pb-3 h-full overflow-scroll">
             {transactions ? (
               <TransactionsTable transactions={transactions.transactionList} />
             ) : null}
@@ -124,8 +138,10 @@ const DebitSummaryPieChart = ({ summaryData, onSelect, ...rest }: any) => {
 
   useEffect(() => {
     if (summaryData) {
-      const labels = summaryData.map((item: any) => 
-        `${capitalizeFirstLetter(item.defaultTag || "No Tag")}: ${item.totalDebit} (Transactions: ${item.totalTransactions})`);
+      const labels = summaryData.map(
+        (item: any) =>
+          `${capitalizeFirstLetter(item.defaultTag || "No Tag")}: ${item.totalDebit} (Transactions: ${item.totalTransactions})`
+      );
       const data = summaryData.map((item: any) => item.totalDebit);
 
       setChartData((prevData) => ({
@@ -143,7 +159,6 @@ const DebitSummaryPieChart = ({ summaryData, onSelect, ...rest }: any) => {
 
   return (
     <div {...rest}>
-      <h2 className="font-bold">Debit Summary</h2>
       <Pie data={chartData} options={options} />
     </div>
   );
