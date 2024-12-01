@@ -124,10 +124,8 @@ const DebitSummaryPieChart = ({ summaryData, onSelect, ...rest }: any) => {
 
   useEffect(() => {
     if (summaryData) {
-      const labels = summaryData.map((item: any) => [
-        `${capitalizeFirstLetter(item.defaultTag || "No Tag")}: ${item.totalDebit} (Transactions: ${item.totalTransactions})`,
-        1,
-      ]);
+      const labels = summaryData.map((item: any) => 
+        `${capitalizeFirstLetter(item.defaultTag || "No Tag")}: ${item.totalDebit} (Transactions: ${item.totalTransactions})`);
       const data = summaryData.map((item: any) => item.totalDebit);
 
       setChartData((prevData) => ({
