@@ -1,9 +1,9 @@
 import {
   createLazyFileRoute,
-  useParams,
   useSearch,
+  useNavigate,
 } from "@tanstack/react-router";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import {  useQuery } from "@tanstack/react-query";
 import { useAuthStore } from "../store/auth";
 import { getSummery, getTransactions } from "../api/auth";
 import { Pie } from "react-chartjs-2";
@@ -18,6 +18,7 @@ export const Route = createLazyFileRoute("/summery")({
 
 function RouteComponent() {
   const query = useSearch({ strict: false });
+  const navigate = useNavigate();
   const authStore = useAuthStore();
   const summeryQuery = useQuery({
     queryKey: ["summery", query],
@@ -33,6 +34,9 @@ function RouteComponent() {
   const data = summeryQuery.data;
 
   const [tag, setTag] = useState<string | null>(null);
+  const [selectedMonth, setSelectedMonth] = useState("");
+  const [selectedYear, setSelectedYear] = useState("");
+  const [salaryDate, setSalaryDate] = useState("");
 
   const transactionsQuery = useQuery({
     queryKey: [
@@ -57,10 +61,89 @@ function RouteComponent() {
 
   const transactions = transactionsQuery.data;
 
+  const handleApplyFilters = () => {
+    if (selectedMonth && selectedYear && salaryDate) {
+      const month = parseInt(selectedMonth, 10);
+      const year = parseInt(selectedYear, 10);
+
+      const start = [
+        year,
+        String(month - 1).padStart(2, "0"),
+        String(parseInt(salaryDate, 10)).padStart(2, "0"),
+      ].join("-");
+      const end = [
+        year,
+        String(month).padStart(2, "0"),
+        String(parseInt(salaryDate, 10)).padStart(2, "0"),
+      ].join("-");
+
+      navigate({
+        to: "/summery",
+        search: (old: any) => ({ ...old, start, end }),
+      });
+    }
+  };
+
+  const handleNextMonth = () => {
+    if (selectedMonth && selectedYear) {
+      let month = parseInt(selectedMonth, 10);
+      let year = parseInt(selectedYear, 10);
+
+      if (month === 12) {
+        month = 1;
+        year += 1;
+      } else {
+        month += 1;
+      }
+
+      setSelectedMonth(month.toString());
+      setSelectedYear(year.toString());
+      handleApplyFilters();
+    }
+  };
+
+  const handlePreviousMonth = () => {
+    if (selectedMonth && selectedYear) {
+      let month = parseInt(selectedMonth, 10);
+      let year = parseInt(selectedYear, 10);
+
+      if (month === 1) {
+        month = 12;
+        year -= 1;
+      } else {
+        month -= 1;
+      }
+
+      setSelectedMonth(month.toString());
+      setSelectedYear(year.toString());
+      handleApplyFilters();
+    }
+  };
+
+  const months = [
+    { value: "1", label: "January" },
+    { value: "2", label: "February" },
+    { value: "3", label: "March" },
+    { value: "4", label: "April" },
+    { value: "5", label: "May" },
+    { value: "6", label: "June" },
+    { value: "7", label: "July" },
+    { value: "8", label: "August" },
+    { value: "9", label: "September" },
+    { value: "10", label: "October" },
+    { value: "11", label: "November" },
+    { value: "12", label: "December" },
+  ];
+
+  const years = Array.from({ length: 20 }, (_, i) => {
+    const year = new Date().getFullYear() - i;
+    return { value: year.toString(), label: year.toString() };
+  });
+
   return (
     <div className="p-4 h-screen w-screen">
       <div className="flex flex-row h-full">
-        <div className="w-1/2">
+        <div className="w-1/2 h-full flex flex-col">
           <h2 className="font-bold">
             Debit Summary - Total: ~{" "}
             {summeryQuery.data
@@ -74,16 +157,72 @@ function RouteComponent() {
               : null}{" "}
             Rs
           </h2>
-          {data ? (
-            <DebitSummaryPieChart
-              summaryData={data.summery}
-              onSelect={(v: any) => {
-                setTag(v.defaultTag);
-              }}
+          <div className="flex flex-grow flex-shrink-0 p-4">
+            {data ? (
+              <DebitSummaryPieChart
+                summaryData={data.summery}
+                onSelect={(v: any) => {
+                  setTag(v.defaultTag);
+                }}
+              />
+            ) : (
+              "Loading..."
+            )}
+          </div>
+          <div className="mb-4 flex flex-row items-center gap-2">
+            <select
+              value={selectedMonth}
+              onChange={(e) => setSelectedMonth(e.target.value)}
+              className="border p-1"
+            >
+              <option value="">Month</option>
+              {months.map((month) => (
+                <option key={month.value} value={month.value}>
+                  {month.label}
+                </option>
+              ))}
+            </select>
+
+            <select
+              value={selectedYear}
+              onChange={(e) => setSelectedYear(e.target.value)}
+              className="border p-1"
+            >
+              <option value="">Year</option>
+              {years.map((year) => (
+                <option key={year.value} value={year.value}>
+                  {year.label}
+                </option>
+              ))}
+            </select>
+
+            <input
+              type="number"
+              value={salaryDate}
+              onChange={(e) => setSalaryDate(e.target.value)}
+              placeholder="Salary Date (DD)"
+              className="border p-1"
             />
-          ) : (
-            "Loading..."
-          )}
+
+            <button
+              onClick={handleApplyFilters}
+              className="p-2 bg-blue-500 text-white"
+            >
+              Apply
+            </button>
+            <button
+              onClick={handlePreviousMonth}
+              className="p-2 bg-gray-500 text-white"
+            >
+              Previous Month
+            </button>
+            <button
+              onClick={handleNextMonth}
+              className="p-2 bg-gray-500 text-white"
+            >
+              Next Month
+            </button>
+          </div>
         </div>
         <div className="w-1/2 h-full">
           <div className="px-4 pb-3 h-full overflow-scroll">
@@ -131,7 +270,7 @@ const DebitSummaryPieChart = ({ summaryData, onSelect, ...rest }: any) => {
         display: true,
       },
     },
-    onClick: (event: any, elements: any) => {
+    onClick: (_: any, elements: any) => {
       onSelect?.(summaryData[elements[0].index]);
     },
   };
@@ -157,9 +296,5 @@ const DebitSummaryPieChart = ({ summaryData, onSelect, ...rest }: any) => {
     }
   }, [summaryData]);
 
-  return (
-    <div {...rest}>
-      <Pie data={chartData} options={options} />
-    </div>
-  );
+  return <Pie data={chartData} options={options} {...rest} />;
 };

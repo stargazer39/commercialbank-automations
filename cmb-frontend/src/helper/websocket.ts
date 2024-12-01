@@ -19,7 +19,6 @@ const useWebSocket = ({
   url,
   onMessage,
   reconnect = false,
-  beforeReconnect,
   accessToken,
   topic,
 }: WebSocketConfig) => {

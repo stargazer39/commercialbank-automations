@@ -1,6 +1,5 @@
 import { Transaction } from "../api/auth";
 import { capitalizeFirstLetter } from "../helper/text";
-import { humanReadable } from "../helper/time";
 
 const TransactionRow = ({ transaction }: { transaction: Transaction }) => {
   const rowItemclass = "px-4 py-3 border-b text-center";
@@ -19,7 +18,7 @@ const TransactionRow = ({ transaction }: { transaction: Transaction }) => {
       <td className={rowItemclass}>
         {transaction.debit ? transaction.debit : transaction.credit}
       </td>
-      <td className={rowItemclass}>{transaction.runningBalance}</td>
+      {/* <td className={rowItemclass}>{transaction.runningBalance}</td> */}
       <td className={rowItemclass}>{transaction.account.accountNumber}</td>
       <td className={rowItemclass}>
         {capitalizeFirstLetter(transaction.defaultTag || "No tag")}
@@ -43,7 +42,7 @@ const TransactionsTable = ({
             <th className="px-4 py-3 border-b text-left">Description</th>
             <th className="px-4 py-3 border-b text-left">Currency</th>
             <th className="px-4 py-3 border-b text-right">Amount</th>
-            <th className="px-4 py-3 border-b text-right">Running Balance</th>
+            {/* <th className="px-4 py-3 border-b text-right">Running Balance</th> */}
             <th className="px-4 py-3 border-b text-left">Account Number</th>
             <th className="px-4 py-3 border-b text-left">Tag</th>
           </tr>

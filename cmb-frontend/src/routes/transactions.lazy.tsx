@@ -5,8 +5,6 @@ import { getTransactions } from "../api/auth";
 import { useAuthStore } from "../store/auth";
 import LiveBadge from "../components/status-badge";
 import { useTransactionUpdates } from "../helper/websocket";
-import { useEffect } from "react";
-import { urlQueryParamsBuilder } from "../helper/url";
 import moment from "moment";
 
 export const Route = createLazyFileRoute("/transactions")({

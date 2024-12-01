@@ -8,7 +8,7 @@ interface AuthStore {
 
 const useAuthStore = create<AuthStore>()(
   persist<AuthStore>(
-    (set, get) => ({
+    (set, _get) => ({
       accessToken: "",
       setAccessToken: (token: string) => set({ accessToken: token }),
     }),

@@ -21,7 +21,7 @@ function RouteComponent() {
       qc.invalidateQueries({ queryKey: ["transactions"] });
       navigate({ to: "/transactions" });
     },
-    onError(error, variables, context) {
+    onError(error) {
         console.error(error);
     },
   });

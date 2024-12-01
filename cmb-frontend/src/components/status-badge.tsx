@@ -1,5 +1,3 @@
-import React from 'react';
-
 const LiveBadge = ({ status = 'live' }) => {
   const isLive = status === 'live';
 
