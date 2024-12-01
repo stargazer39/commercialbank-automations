@@ -46,7 +46,7 @@ public class CombankService {
         this.accountRepository = accountRepository;
     }
 
-    @Scheduled(fixedDelay = 10*1000)
+//    @Scheduled(fixedDelay = 10*1000)
     public void refresh() {
         log.info("Starting refresh");
         instances.forEach((key, instance) -> {

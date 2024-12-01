@@ -17,6 +17,7 @@ import { Route as rootRoute } from './routes/__root'
 // Create Virtual Routes
 
 const TransactionsLazyImport = createFileRoute('/transactions')()
+const SummeryLazyImport = createFileRoute('/summery')()
 const LoginLazyImport = createFileRoute('/login')()
 const IndexLazyImport = createFileRoute('/')()
 
@@ -27,6 +28,12 @@ const TransactionsLazyRoute = TransactionsLazyImport.update({
   path: '/transactions',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/transactions.lazy').then((d) => d.Route))
+
+const SummeryLazyRoute = SummeryLazyImport.update({
+  id: '/summery',
+  path: '/summery',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/summery.lazy').then((d) => d.Route))
 
 const LoginLazyRoute = LoginLazyImport.update({
   id: '/login',
@@ -58,6 +65,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginLazyImport
       parentRoute: typeof rootRoute
     }
+    '/summery': {
+      id: '/summery'
+      path: '/summery'
+      fullPath: '/summery'
+      preLoaderRoute: typeof SummeryLazyImport
+      parentRoute: typeof rootRoute
+    }
     '/transactions': {
       id: '/transactions'
       path: '/transactions'
@@ -73,12 +87,14 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
   '/login': typeof LoginLazyRoute
+  '/summery': typeof SummeryLazyRoute
   '/transactions': typeof TransactionsLazyRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
   '/login': typeof LoginLazyRoute
+  '/summery': typeof SummeryLazyRoute
   '/transactions': typeof TransactionsLazyRoute
 }
 
@@ -86,27 +102,30 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexLazyRoute
   '/login': typeof LoginLazyRoute
+  '/summery': typeof SummeryLazyRoute
   '/transactions': typeof TransactionsLazyRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/transactions'
+  fullPaths: '/' | '/login' | '/summery' | '/transactions'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/transactions'
-  id: '__root__' | '/' | '/login' | '/transactions'
+  to: '/' | '/login' | '/summery' | '/transactions'
+  id: '__root__' | '/' | '/login' | '/summery' | '/transactions'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
   LoginLazyRoute: typeof LoginLazyRoute
+  SummeryLazyRoute: typeof SummeryLazyRoute
   TransactionsLazyRoute: typeof TransactionsLazyRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
   LoginLazyRoute: LoginLazyRoute,
+  SummeryLazyRoute: SummeryLazyRoute,
   TransactionsLazyRoute: TransactionsLazyRoute,
 }
 
@@ -122,6 +141,7 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/login",
+        "/summery",
         "/transactions"
       ]
     },
@@ -130,6 +150,9 @@ export const routeTree = rootRoute
     },
     "/login": {
       "filePath": "login.lazy.tsx"
+    },
+    "/summery": {
+      "filePath": "summery.lazy.tsx"
     },
     "/transactions": {
       "filePath": "transactions.lazy.tsx"

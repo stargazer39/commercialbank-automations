@@ -2,6 +2,7 @@ package com.dehemi.combank.services;
 
 import com.dehemi.combank.dao.Transaction;
 import com.dehemi.combank.dao.TransactionSummeryByDefaultTag;
+import com.dehemi.combank.dao.TransactionType;
 import com.dehemi.combank.exceptions.CSVProcessException;
 import com.dehemi.combank.repo.AccountRepository;
 import com.dehemi.combank.repo.TransactionRepository;
@@ -32,7 +33,7 @@ public class TransactionService {
         this.accountRepository = accountRepository;
     }
 
-    public Page<Transaction> getTransactions(int page, int size, String userId, String tag, LocalDate fromDate, LocalDate toDate, List<String> accountNumber) {
+    public Page<Transaction> getTransactions(int page, int size, String userId, String tag, LocalDate fromDate, LocalDate toDate, List<String> accountNumber, TransactionType transactionType) {
         Specification<Transaction> spec = Specification.where(TransactionSpecifications.hasUserId(userId));
 
         if (tag != null) {
@@ -44,6 +45,10 @@ public class TransactionService {
 
         if(accountNumber != null && !accountNumber.isEmpty()) {
             spec = spec.and(TransactionSpecifications.hasAccountNumbers(accountNumber));
+        }
+
+        if(transactionType != null) {
+            spec = spec.and(TransactionSpecifications.isType(transactionType));
         }
 
         return transactionRepository.findAll(spec, PageRequest.of(page, size, Sort.by("transactionDate").descending()));

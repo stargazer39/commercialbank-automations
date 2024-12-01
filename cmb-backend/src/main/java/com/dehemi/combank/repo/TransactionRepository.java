@@ -48,7 +48,7 @@ public interface TransactionRepository extends JpaRepository<Transaction,String>
         userId = :userId AND
         transactionDate BETWEEN :start AND :end AND
         transactionType = 1 AND
-        defaultTag != 'credit-payment'
+        defaultTag is distinct from 'credit-payment'
     GROUP BY
         defaultTag
     """)

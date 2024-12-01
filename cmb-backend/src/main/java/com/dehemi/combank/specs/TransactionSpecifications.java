@@ -1,6 +1,7 @@
 package com.dehemi.combank.specs;
 
 import com.dehemi.combank.dao.Transaction;
+import com.dehemi.combank.dao.TransactionType;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
@@ -21,5 +22,9 @@ public class TransactionSpecifications {
 
     public static Specification<Transaction> hasAccountNumbers(List<String> accountNumbers) {
         return (root, query, criteriaBuilder) -> root.get("accountNumber").in(accountNumbers);
+    }
+
+    public static Specification<Transaction> isType(TransactionType type) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("transactionType"), type);
     }
 }

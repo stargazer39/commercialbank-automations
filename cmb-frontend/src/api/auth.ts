@@ -1,4 +1,5 @@
 import Configuration from "../config";
+import { urlQueryParamsBuilder } from "../helper/url";
 
 interface Credentials {
   username: string;
@@ -13,6 +14,11 @@ interface TransactionQuery {
   accessToken: string;
   page: number;
   size: number;
+  tag?: string;
+  start?: string;
+  end?: string;
+  accountNumber?: string[];
+  type?: string;
 }
 
 interface Transaction {
@@ -46,7 +52,7 @@ async function login({ username, password }: Credentials): Promise<Tokens> {
     headers: myHeaders,
     body: raw,
   };
-  console.log(Configuration.getAPIEndpoint("/user/token"))
+  console.log(Configuration.getAPIEndpoint("/user/token"));
   let response = await fetch(
     Configuration.getAPIEndpoint("/user/token"),
     requestOptions
@@ -63,6 +69,10 @@ async function getTransactions({
   accessToken,
   page,
   size,
+  tag,
+  start,
+  end,
+  type
 }: TransactionQuery): Promise<TransactionList> {
   const myHeaders = new Headers();
   myHeaders.append("Authorization", "Bearer " + accessToken);
@@ -73,7 +83,14 @@ async function getTransactions({
   };
 
   const response = await fetch(
-    Configuration.getAPIEndpoint(`/transactions?page=${page}&size=${size}`),
+    urlQueryParamsBuilder(Configuration.getAPIEndpoint(`/transactions`), {
+      page,
+      size,
+      tag,
+      start,
+      end,
+      type
+    }),
     requestOptions
   );
 
@@ -84,5 +101,33 @@ async function getTransactions({
   return response.json();
 }
 
-export { login, getTransactions };
+async function getSummery({
+  accessToken,
+  start,
+  end,
+}: TransactionQuery): Promise<any> {
+  const myHeaders = new Headers();
+  myHeaders.append("Authorization", "Bearer " + accessToken);
+
+  const requestOptions = {
+    method: "GET",
+    headers: myHeaders,
+  };
+
+  const response = await fetch(
+    urlQueryParamsBuilder(Configuration.getAPIEndpoint(`/transactions/debit/by-default-tag`), {
+      start,
+      end,
+    }),
+    requestOptions
+  );
+
+  if (!response.ok) {
+    throw new Error("getTransactions response was not okay");
+  }
+
+  return response.json();
+}
+
+export { login, getTransactions, getSummery };
 export type { Credentials, Transaction, TransactionList };
