@@ -2,13 +2,11 @@ package com.dehemi.combank.services;
 
 import com.dehemi.combank.dao.Transaction;
 import com.dehemi.combank.dao.TransactionSummeryByDefaultTag;
-import com.dehemi.combank.dao.User;
 import com.dehemi.combank.exceptions.CSVProcessException;
 import com.dehemi.combank.repo.AccountRepository;
 import com.dehemi.combank.repo.TransactionRepository;
 import com.dehemi.combank.specs.TransactionSpecifications;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.opencsv.exceptions.CsvValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -20,9 +18,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
