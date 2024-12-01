@@ -15,7 +15,6 @@ public class AITransaction {
         AITransaction aiTransaction = new AITransaction();
         aiTransaction.hash = transaction.getHash();
         aiTransaction.description = transaction.getDescription();
-        aiTransaction.defaultTag = transaction.getDefaultTag();
         aiTransaction.amount = transaction.getDebit();
         return aiTransaction;
     }
