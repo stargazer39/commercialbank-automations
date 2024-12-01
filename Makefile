@@ -14,3 +14,16 @@ build-be:
 
 pull-be:
 	docker pull ${DOCKER_USERNAME}/${APPLICATION_NAME}:latest
+
+release-fe:
+	cd cmb-frontend; \
+		docker build --tag ${DOCKER_USERNAME}/${APPLICATION_NAME}-fe:${GIT_HASH} . --no-cache; \
+		docker tag  ${DOCKER_USERNAME}/${APPLICATION_NAME}-fe:${GIT_HASH} ${DOCKER_USERNAME}/${APPLICATION_NAME}-fe:latest; \
+		docker push ${DOCKER_USERNAME}/${APPLICATION_NAME}-fe:latest;
+
+build-fe:
+	cd cmb-frontend; \
+		docker build --tag ${DOCKER_USERNAME}/${APPLICATION_NAME}-fe:${GIT_HASH} .;
+
+pull-fe:
+	docker pull ${DOCKER_USERNAME}/${APPLICATION_NAME}-fe:latest

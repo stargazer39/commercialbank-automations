@@ -23,6 +23,9 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }} # Set this in GitHub secrets
           password: ${{ secrets.DOCKER_PASSWORD }} # Set this in GitHub secrets
      # Run make release-be
-    - name: Run release build
+    - name: Build and Release the backend
       run: make release-be
+    
+    - name: Build and Release the frontend
+      run: make release-fe
     
