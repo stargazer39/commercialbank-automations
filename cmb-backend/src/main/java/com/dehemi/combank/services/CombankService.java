@@ -46,7 +46,7 @@ public class CombankService {
         this.accountRepository = accountRepository;
     }
 
-    @Scheduled(fixedDelay = 10*1000)
+    @Scheduled(fixedDelayString = "${combankService.scannerDelay}")
     public void refresh() {
         log.info("Starting refresh");
         instances.forEach((key, instance) -> {
@@ -70,7 +70,7 @@ public class CombankService {
         });
     }
 
-    @Scheduled(fixedDelay = 60*60*1000)
+    @Scheduled(fixedDelayString = "${combankService.taggerDelay}")
     public void generateTags() throws IOException {
         log.info("Starting generate tags");
         while(true) {
